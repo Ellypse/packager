@@ -1791,13 +1791,18 @@ if [ -z "$skip_zipfile" ]; then
 		# word "release", then it is considered a release tag. If the above
 		# conditions don't match, it is considered a beta tag. Untagged commits
 		# are considered alphas.
-		file_type=alpha
+		file_type=
 		if [ -n "$tag" ]; then
-			if [[ "$tag" =~ ^v?[0-9][0-9.]*$ || "${tag,,}" == *"release"* ]]; then
-				file_type=release
-			else
+			if [[ "${tag,,}" == *"alpha"* ]]; then
+				file_type=alpha
+			elif [[ "${tag,,}" == *"beta"* ]]; then
 				file_type=beta
+			else
+				file_type=release
 			fi
+		else
+			echo "Found no tag, exiting."
+			exit 0
 		fi
 
 		_cf_payload=$( cat <<-EOF
